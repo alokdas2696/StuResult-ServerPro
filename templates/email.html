@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Email Verification</title>
+</head>
+<body>
+{{msg}}
+<div>
+
+    <form action="http://localhost:5000/verify" method="POST">
+        <label>Enter your Student Roll Number</label>
+        <input type="number" name="rollno" required><br>
+        <label>Enter your Email ID</label>
+        <input type ="text" name="email" required><br>
+        <input type="submit" value="submit">
+
+    </form>
+</div>
+
+</body>
+</html>
