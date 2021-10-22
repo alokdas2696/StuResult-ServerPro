@@ -9,11 +9,11 @@ app = Flask(__name__)
 with open ('config.json','r') as k:
     params = json.load(k)['params']
 
-otp = randint(0000,9999)
+otp = randint(1111,9999)
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/studb'
-db= SQLAlchemy(app)
+db = SQLAlchemy(app)
 
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
@@ -21,6 +21,7 @@ app.config['MAIL_USERNAME'] = params['gmail-user']
 app.config['MAIL_PASSWORD'] = params['gmail-password']
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
+
 mail = Mail(app)
 
 class Student(db.Model):
@@ -32,7 +33,7 @@ class Student(db.Model):
     scmarks = db.Column(db.Integer(), unique=False, nullable=False)
     csmarks = db.Column(db.Integer(), unique=False, nullable=False)
 
-# @app.route("/", methods=['GET','POST'])
+# @app.route("/display", methods=['GET','POST'])
 # def display():
 #     if request.method == 'POST':
 #         d = request.form.get('rollno')
@@ -51,32 +52,46 @@ class Student(db.Model):
 #         return render_template('result.html', data=f, total=total, per=per)
 #     return render_template('display.html')
 
-@app.route('/')
-def everify():
-    return render_template("email.html",msg="")
+@app.route('/',methods=['GET'])
+def home():
+      return render_template("email.html")
 
 @app.route('/verify',methods=['GET','POST'])
 def verify():
     if request.method == 'POST':
         gmail = request.form['email']
+        d = request.form.get('rollno')
         msg = Message('OTP',sender='alokdas9626@gmail.com', recipients=[gmail])
         msg.body = str(otp)
         mail.send(msg)
-        return render_template("verify.html")
+        return render_template("verify.html",d=d)
     return render_template('verify.html')
 
 
-@app.route('/validate',methods=['GET','POST'])
-def validate():
+@app.route('/validate/<int:d>',methods=['GET','POST'])
+def validate(d):
     if request.method == 'POST':
+        f = Student.query.get(d)
+        gmail=f.email
         userotp = request.form['otp']
         if otp == int(userotp):
-            return "Email verified Successfully"
+            # return render_template('send.html',f=f)
+            msg = Message('OTP', sender='alokdas9626@gmail.com', recipients=[gmail])
+            msg.body = f.name
+            mail.send(msg)
+            return " Result Send"
+        # return render_template('email.html', msg="Not Verified !! try again")
         return render_template('email.html', msg="Not Verified !! try again")
 
 
+
+
+
+
+
+
 @app.route("/studinfo",methods=['GET','POST'])
-def info():
+def admin():
     if request.method == 'POST':
         stuid = request.form.get('stuid')
         name = request.form.get('name')
@@ -89,7 +104,7 @@ def info():
         entry= Student(stuid=stuid, name=name, email=email, mbno=mbno, mtmarks=mtmarks, scmarks=scmarks, csmarks=csmarks)
         db.session.add(entry)
         db.session.commit()
-    return render_template("index.html")
+    return render_template("send.html")
 
 
 if __name__ == "__main__":
