@@ -6,7 +6,7 @@ from random import randint
 app = Flask(__name__)
 
 
-with open ('config.json','r') as k:
+with open('config.json','r') as k:
     params = json.load(k)['params']
 
 otp = randint(1111,9999)
