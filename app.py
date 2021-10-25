@@ -68,12 +68,6 @@ def verify():
         stuid = Student.query.get(d)
         gmail = stuid.email
         if email == gmail:
-
-
-        # f = Student.query.get(gmail)
-        # gmail1 = f.email
-        # d = request.form.get('rollno')
-
             msg = Message('OTP',sender='alokdas9626@gmail.com', recipients=[gmail])
             msg.body = str(otp)
             mail.send(msg)
@@ -90,12 +84,13 @@ def validate(d):
         gmail = f.email
         userotp = request.form['otp']
         if otp == int(userotp):
-            # return render_template('send.html',f=f)
-            msg = Message('OTP', sender='alokdas9626@gmail.com', recipients=[gmail])
-            msg.body = f.name
-            mail.send(msg)
+            # msg = Message('OTP', sender='alokdas9626@gmail.com', recipients=[gmail])
+            # # msg.body = f.name
+            # mail.send(msg)
+            mail.send_message("Result: ",sender='alokdas9626@gmail.com', recipients=[gmail], body=f.name + "\n Email: " + f.email + "\n Math Marks: " + str(f.mtmarks)
+                              + "\n Science Marks: " + str(f.scmarks)+ "\n Computer Marks: " + str(f.csmarks)+ "\n Total Marks:"
+                            + str(f.csmarks + f.mtmarks + f.scmarks)+ "\n Percenatge: " +str(round(((f.csmarks + f.mtmarks + f.scmarks)/300)*100)))
             return render_template('result.html',f=f, msg="Result has been Send to your given respected Email Id")
-        # return render_template('email.html', msg="Not Verified !! try again")
         return render_template('email.html', msg="Not Verified !! try again")
 
 
