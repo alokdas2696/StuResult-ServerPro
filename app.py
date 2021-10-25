@@ -106,7 +106,6 @@ def login():
         password=request.form['password']
         if username == "admin" and password == "12345":
             session['username'] = username
-            # return render_template('send.html', msg=" login successful", username=username)
             return redirect("/admin1")
         else:
             msg = " Invalid username/ password"
