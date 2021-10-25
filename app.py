@@ -1,9 +1,11 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, session,redirect
 from flask_sqlalchemy import SQLAlchemy, request
 from flask_mail import *
 import json
 from random import randint
 app = Flask(__name__)
+app.secret_key = "login"
+
 
 
 with open('config.json','r') as k:
@@ -56,6 +58,7 @@ class Student(db.Model):
 def home():
       return render_template("email.html")
 
+
 @app.route('/verify',methods=['GET','POST'])
 def verify():
     if request.method == 'POST':
@@ -72,7 +75,7 @@ def verify():
 def validate(d):
     if request.method == 'POST':
         f = Student.query.get(d)
-        gmail=f.email
+        gmail = f.email
         userotp = request.form['otp']
         if otp == int(userotp):
             # return render_template('send.html',f=f)
@@ -83,6 +86,19 @@ def validate(d):
         # return render_template('email.html', msg="Not Verified !! try again")
         return render_template('email.html', msg="Not Verified !! try again")
 
+@app.route("/login", methods=['GET','POST'])
+def login():
+    if request.method == 'POST':
+        username=request.form['username']
+        password=request.form['password']
+        if username == "admin" and password == "12345":
+            # session[username] == username
+            # return render_template('send.html', msg=" login successful", username=username)
+            return redirect("/admin1")
+        else:
+            msg = " Invalid username/ password"
+            return render_template("login.html", msg=msg)
+    return render_template("login.html")
 
 
 
@@ -90,8 +106,42 @@ def validate(d):
 
 
 
-@app.route("/studinfo",methods=['GET','POST'])
-def admin():
+
+    #         return render_template('send.html',msg="login successful",uname=uname)
+    #     else:
+    #         msg="Invalid username/ password"
+    #         return render_template("/login.html",msg = msg)
+    # return render_template("login.html")
+
+
+
+
+
+
+# @app.route("/studinfo",methods=['GET','POST'])
+# def add():
+#     if request.method == 'POST':
+#         stuid = request.form.get('stuid')
+#         name = request.form.get('name')
+#         email = request.form.get('email')
+#         mbno = request.form.get('mbno')
+#         mtmarks = request.form.get('mtmarks')
+#         scmarks = request.form.get('scmarks')
+#         csmarks = request.form.get('csmarks')
+#
+#         entry= Student(stuid=stuid, name=name, email=email, mbno=mbno, mtmarks=mtmarks, scmarks=scmarks, csmarks=csmarks)
+#         db.session.add(entry)
+#         db.session.commit()
+#     return render_template("index1.html")
+@app.route("/admin1",methods=['GET'])
+def admin1():
+
+
+    alldata = Student.query.all()
+    return render_template("index1.html", alldata=alldata)
+
+@app.route("/admin",methods=['POST'])
+def add():
     if request.method == 'POST':
         stuid = request.form.get('stuid')
         name = request.form.get('name')
@@ -101,10 +151,52 @@ def admin():
         scmarks = request.form.get('scmarks')
         csmarks = request.form.get('csmarks')
 
-        entry= Student(stuid=stuid, name=name, email=email, mbno=mbno, mtmarks=mtmarks, scmarks=scmarks, csmarks=csmarks)
-        db.session.add(entry)
+        stu= Student(stuid=stuid, name=name, email=email, mbno=mbno, mtmarks=mtmarks, scmarks=scmarks, csmarks=csmarks)
+        db.session.add(stu)
         db.session.commit()
-    return render_template("send.html")
+
+    alldata = Student.query.all()
+    return render_template("index1.html",alldata=alldata)
+
+# admin Dasboard----------------------
+@app.route("/update/<int:stuid>" ,methods=['GET','POST'])
+def update(stuid):
+    if request.method == 'POST':
+        stuid = request.form.get('stuid')
+        name = request.form.get('name')
+        email = request.form.get('email')
+        mbno = request.form.get('mbno')
+        mtmarks = request.form.get('mtmarks')
+        scmarks = request.form.get('scmarks')
+        csmarks = request.form.get('csmarks')
+        stu = Student.query.filter_by(stuid=stuid).first()
+        # d = Student(stuid=stuid, name=name, email=email, mbno=mbno, mtmarks=mtmarks, scmarks=scmarks,
+        #                 csmarks=csmarks)
+        # db.session.add(d)
+        # db.session.commit()
+        stu.stuid = stuid
+        stu.name = name
+        stu.email = email
+        stu.mbno = mbno
+        stu.mtmarks = mtmarks
+        stu.scmarks = scmarks
+        stu.csmarks = csmarks
+        db.session.add(stu)
+        db.session.commit()
+        return redirect("/admin1")
+    stu = Student.query.filter_by(stuid=stuid).first()
+    return render_template('update.html',stu=stu)
+
+
+
+
+
+@app.route("/delete/<int:stuid>")
+def delete(stuid):
+    stu = Student.query.filter_by(stuid=stuid).first()
+    db.session.delete(stu)
+    db.session.commit()
+    return redirect("/admin1")
 
 
 if __name__ == "__main__":
