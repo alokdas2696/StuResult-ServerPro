@@ -35,25 +35,6 @@ class Student(db.Model):
     scmarks = db.Column(db.Integer(), unique=False, nullable=False)
     csmarks = db.Column(db.Integer(), unique=False, nullable=False)
 
-# @app.route("/display", methods=['GET','POST'])
-# def display():
-#     if request.method == 'POST':
-#         d = request.form.get('rollno')
-#         f = Student.query.get(d)
-#
-#         total = f.mtmarks+f.scmarks+f.csmarks
-#
-#         per = (total / 300) * 100
-#         per = round(per)
-#
-#
-#         # g = f.stuid
-#         # i = f.email
-#         # j = f.mbno
-#
-#         return render_template('result.html', data=f, total=total, per=per)
-#     return render_template('display.html')
-
 
 @app.route('/',methods=['GET'])
 def home():
