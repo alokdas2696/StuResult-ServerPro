@@ -7,11 +7,10 @@ app = Flask(__name__)
 app.secret_key = "login"
 
 
-
-with open('config.json','r') as k:
+with open('config.json', 'r') as k:
     params = json.load(k)['params']
 
-otp = randint(1111,9999)
+otp = randint(1111, 9999)
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/studb'
@@ -25,6 +24,7 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 
 mail = Mail(app)
+
 
 class Student(db.Model):
     stuid = db.Column(db.Integer(), primary_key=True)
@@ -54,12 +54,13 @@ class Student(db.Model):
 #         return render_template('result.html', data=f, total=total, per=per)
 #     return render_template('display.html')
 
+
 @app.route('/',methods=['GET'])
 def home():
-      return render_template("email.html")
+    return render_template("email.html")
 
 
-@app.route('/verify',methods=['GET','POST'])
+@app.route('/verify', methods=['GET', 'POST'])
 def verify():
     if request.method == 'POST':
         email = request.form.get('email')
@@ -76,13 +77,13 @@ def verify():
             msg = Message('OTP',sender='alokdas9626@gmail.com', recipients=[gmail])
             msg.body = str(otp)
             mail.send(msg)
-            return render_template("verify.html",d=d)
+            return render_template("verify.html", d=d)
         else:
             return " Unmatched EmailID with Roll No"
     return render_template('verify.html')
 
 
-@app.route('/validate/<int:d>',methods=['GET','POST'])
+@app.route('/validate/<int:d>',methods=['GET', 'POST'])
 def validate(d):
     if request.method == 'POST':
         f = Student.query.get(d)
@@ -93,9 +94,10 @@ def validate(d):
             msg = Message('OTP', sender='alokdas9626@gmail.com', recipients=[gmail])
             msg.body = f.name
             mail.send(msg)
-            return " Result Send"
+            return render_template('result.html',f=f, msg="Result has been Send to your given respected Email Id")
         # return render_template('email.html', msg="Not Verified !! try again")
         return render_template('email.html', msg="Not Verified !! try again")
+
 
 @app.route("/login", methods=['GET','POST'])
 def login():
@@ -112,38 +114,12 @@ def login():
     return render_template("login.html")
 
 
+@app.route("/logout")
+def logout():
+    session.pop('email',None)
+    return render_template('login.html')
 
 
-
-
-
-
-    #         return render_template('send.html',msg="login successful",uname=uname)
-    #     else:
-    #         msg="Invalid username/ password"
-    #         return render_template("/login.html",msg = msg)
-    # return render_template("login.html")
-
-
-
-
-
-
-# @app.route("/studinfo",methods=['GET','POST'])
-# def add():
-#     if request.method == 'POST':
-#         stuid = request.form.get('stuid')
-#         name = request.form.get('name')
-#         email = request.form.get('email')
-#         mbno = request.form.get('mbno')
-#         mtmarks = request.form.get('mtmarks')
-#         scmarks = request.form.get('scmarks')
-#         csmarks = request.form.get('csmarks')
-#
-#         entry= Student(stuid=stuid, name=name, email=email, mbno=mbno, mtmarks=mtmarks, scmarks=scmarks, csmarks=csmarks)
-#         db.session.add(entry)
-#         db.session.commit()
-#     return render_template("index1.html")
 @app.route("/admin1",methods=['GET'])
 def admin1():
     if "username" in session:
@@ -151,6 +127,7 @@ def admin1():
         return render_template("index1.html", alldata=alldata)
     else:
         return redirect("/login")
+
 
 @app.route("/admin",methods=['POST'])
 def add():
@@ -173,7 +150,7 @@ def add():
     else:
         return redirect("/login")
 
-# admin Dasboard----------------------
+
 @app.route("/update/<int:stuid>" ,methods=['GET','POST'])
 def update(stuid):
     if "username" in session:
@@ -186,10 +163,6 @@ def update(stuid):
             scmarks = request.form.get('scmarks')
             csmarks = request.form.get('csmarks')
             stu = Student.query.filter_by(stuid=stuid).first()
-            # d = Student(stuid=stuid, name=name, email=email, mbno=mbno, mtmarks=mtmarks, scmarks=scmarks,
-            #                 csmarks=csmarks)
-            # db.session.add(d)
-            # db.session.commit()
             stu.stuid = stuid
             stu.name = name
             stu.email = email
@@ -206,8 +179,6 @@ def update(stuid):
         return redirect("/login")
 
 
-
-
 @app.route("/delete/<int:stuid>")
 def delete(stuid):
     if "username" in session:
@@ -217,6 +188,7 @@ def delete(stuid):
         return redirect("/admin1")
     else:
         return redirect("/login")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
