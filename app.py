@@ -14,6 +14,7 @@ otp = randint(1111, 9999)
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/studb'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -68,9 +69,11 @@ def validate(d):
             # msg = Message('OTP', sender='alokdas9626@gmail.com', recipients=[gmail])
             # # msg.body = f.name
             # mail.send(msg)
+
             mail.send_message("Result: ",sender='alokdas9626@gmail.com', recipients=[gmail], body=f.name + "\n Email: " + f.email + "\n Math Marks: " + str(f.mtmarks)
                               + "\n Science Marks: " + str(f.scmarks)+ "\n Computer Marks: " + str(f.csmarks)+ "\n Total Marks:"
                             + str(f.csmarks + f.mtmarks + f.scmarks)+ "\n Percenatge: " +str(round(((f.csmarks + f.mtmarks + f.scmarks)/300)*100)))
+
             return render_template('result.html',f=f, msg="Result has been Send to your given respected Email Id")
         return render_template('email.html', msg="Not Verified !! try again")
 
