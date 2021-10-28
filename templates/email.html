@@ -26,13 +26,16 @@
   </div>
 </nav>
 {{msg}}
+
+<div>
+    <h2>Student Login </h2>
+</div>
 <div>
 
-    <form action="http://localhost:5000/verify" method="POST">
-        <label>Enter your Student Roll Number</label>
-        <input type="number" name="rollno" required><br>
-        <label>Enter your Email ID</label>
-        <input type ="email" name="email" required><br>
+    <form action="/verify" method="POST">
+        <label>Enter your Roll Number</label>
+        <input type="text" name="rollno" required><br>
+
         <input type="submit" class="btn btn-outline-dark value="Submit">
 
     </form>

@@ -1,10 +1,12 @@
+# import os
+
 from flask import Flask, render_template, session,redirect
 from flask_sqlalchemy import SQLAlchemy, request
 from flask_mail import *
 import json
 from random import randint
-app = Flask(__name__)
-app.secret_key = "login"
+application = Flask(__name__)
+application.secret_key = "login"
 
 
 with open('config.json', 'r') as k:
@@ -13,18 +15,18 @@ with open('config.json', 'r') as k:
 otp = randint(1111, 9999)
 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/studb'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+application.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/studb'
+application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(application)
 
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = params['gmail-user']
-app.config['MAIL_PASSWORD'] = params['gmail-password']
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
+application.config['MAIL_SERVER'] = 'smtp.gmail.com'
+application.config['MAIL_PORT'] = 465
+application.config['MAIL_USERNAME'] = params['gmail-user']
+application.config['MAIL_PASSWORD'] = params['gmail-password']
+application.config['MAIL_USE_TLS'] = False
+application.config['MAIL_USE_SSL'] = True
 
-mail = Mail(app)
+mail = Mail(application)
 
 
 class Student(db.Model):
@@ -37,20 +39,20 @@ class Student(db.Model):
     csmarks = db.Column(db.Integer(), unique=False, nullable=False)
 
 
-@app.route('/',methods=['GET'])
+@application.route('/',methods=['GET'])
 def home():
     return render_template("email.html")
 
 
-@app.route('/verify', methods=['GET', 'POST'])
+@application.route('/verify', methods=['GET', 'POST'])
 def verify():
     if request.method == 'POST':
-        email = request.form.get('email')
+        # email = request.form.get('email')
         d = request.form.get('rollno')
         stuid = Student.query.get(d)
-        gmail = stuid.email
-        if email == gmail:
-            msg = Message('OTP',sender='alokdas9626@gmail.com', recipients=[gmail])
+        email = stuid.email
+        if email.strip() == email:
+            msg = Message('OTP',sender='alokdas9626@gmail.com', recipients=[email])
             msg.body = str(otp)
             mail.send(msg)
             return render_template("verify.html", d=d)
@@ -59,7 +61,7 @@ def verify():
     return render_template('verify.html')
 
 
-@app.route('/validate/<int:d>',methods=['GET', 'POST'])
+@application.route('/validate/<int:d>',methods=['GET', 'POST'])
 def validate(d):
     if request.method == 'POST':
         f = Student.query.get(d)
@@ -78,12 +80,12 @@ def validate(d):
         return render_template('email.html', msg="Not Verified !! try again")
 
 
-@app.route("/login", methods=['GET','POST'])
+@application.route("/login", methods=['GET','POST'])
 def login():
     if request.method == 'POST':
         username=request.form['username']
         password=request.form['password']
-        if username == "admin" and password == "12345":
+        if username.strip() == "admin" and password.strip() == "12345":
             session['username'] = username
             return redirect("/admin1")
         else:
@@ -92,13 +94,13 @@ def login():
     return render_template("login.html")
 
 
-@app.route("/logout")
+@application.route("/logout")
 def logout():
     session.pop('email',None)
     return render_template('login.html')
 
 
-@app.route("/admin1",methods=['GET'])
+@application.route("/admin1",methods=['GET'])
 def admin1():
     if "username" in session:
         alldata = Student.query.all()
@@ -107,7 +109,7 @@ def admin1():
         return redirect("/login")
 
 
-@app.route("/admin",methods=['POST'])
+@application.route("/admin",methods=['POST'])
 def add():
     if "username" in session:
         if request.method == 'POST':
@@ -119,7 +121,7 @@ def add():
             scmarks = request.form.get('scmarks')
             csmarks = request.form.get('csmarks')
 
-            stu= Student(stuid=stuid, name=name, email=email, mbno=mbno, mtmarks=mtmarks, scmarks=scmarks, csmarks=csmarks)
+            stu= Student(stuid=stuid.strip(), name=name.strip(), email=email.strip(), mbno=mbno.strip(), mtmarks=mtmarks.strip(), scmarks=scmarks.strip(), csmarks=csmarks.strip())
             db.session.add(stu)
             db.session.commit()
 
@@ -129,7 +131,7 @@ def add():
         return redirect("/login")
 
 
-@app.route("/update/<int:stuid>" ,methods=['GET','POST'])
+@application.route("/update/<int:stuid>" ,methods=['GET','POST'])
 def update(stuid):
     if "username" in session:
         if request.method == 'POST':
@@ -157,7 +159,7 @@ def update(stuid):
         return redirect("/login")
 
 
-@app.route("/delete/<int:stuid>")
+@application.route("/delete/<int:stuid>")
 def delete(stuid):
     if "username" in session:
         stu = Student.query.filter_by(stuid=stuid).first()
@@ -169,4 +171,4 @@ def delete(stuid):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    application.run(debug=True)

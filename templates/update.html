@@ -5,38 +5,38 @@
         <h2>Update Students</h2><br>
     <form action="/update/{{stu.stuid}}" method="POST">
       <div class="mb-3">
-      <label>Enter your Student ID</label>
-        <input type="number" name="stuid" value="{{stu.stuid}}"><br>
+      <label>Enter Student ID</label>
+        <input type="number" name="stuid"  required value="{{stu.stuid}}"><br>
       </div>
 
     <div class="mb-3">
-    <label>Enter your Student Name</label>
-        <input type="text" name="name" value="{{stu.name}}"><br>
+    <label>Enter Student Name</label>
+        <input type="text" name="name" required value="{{stu.name}}"><br>
     </div>
 
       <div class="mb-3">
-    <label>Enter your EmailID</label>
-        <input type="text" name="email" value="{{stu.email}}"><br>
+    <label>Enter EmailID</label>
+        <input type="text" name="email" required value="{{stu.email}}"><br>
       </div>
 
       <div class="mb-3">
-    <label>Enter your Mobile Number</label>
-        <input type="text" name="mbno" value="{{stu.mbno}}"><br>
+    <label>Enter Mobile Number</label>
+        <input type="text" name="mbno" required value="{{stu.mbno}}"><br>
       </div>
 
       <div class="mb-3">
-    <label>Enter your Maths Marks</label>
-    <input type="text" name="mtmarks" value="{{stu.mtmarks}}"><br>
+    <label>Enter Maths Marks</label>
+    <input type="text" name="mtmarks" required value="{{stu.mtmarks}}"><br>
       </div>
 
       <div class="mb-3">
-    <label>Enter your Science Marks</label>
-    <input type="text" name="scmarks" value="{{stu.scmarks}}"><br>
+    <label>Enter Science Marks</label>
+    <input type="text" name="scmarks" required value="{{stu.scmarks}}"><br>
       </div>
 
       <div class="mb-3">
     <label>Enter your Computer Marks</label>
-    <input type="text" name="csmarks" value="{{stu.csmarks}}"><br>
+    <input type="text" name="csmarks" required value="{{stu.csmarks}}"><br>
       </div>
 
         <input type="submit" class="btn btn-outline-dark"></input>
