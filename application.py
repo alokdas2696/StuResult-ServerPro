@@ -22,8 +22,8 @@ db = SQLAlchemy(application)
 
 application.config['MAIL_SERVER'] = 'smtp.gmail.com'
 application.config['MAIL_PORT'] = 465
-application.config['MAIL_USERNAME'] = 'alokdas9626@gmail.com'
-application.config['MAIL_PASSWORD'] = 'Arushi1307'
+application.config['MAIL_USERNAME'] = params['gmail-user']
+application.config['MAIL_PASSWORD'] = params['gmail-password']
 application.config['MAIL_USE_TLS'] = False
 application.config['MAIL_USE_SSL'] = True
 
