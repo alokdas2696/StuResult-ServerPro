@@ -21,11 +21,11 @@ application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(application)
 
 application.config['MAIL_SERVER'] = 'smtp.gmail.com'
-application.config['MAIL_PORT'] = 587
+application.config['MAIL_PORT'] = 465
 application.config['MAIL_USERNAME'] = 'alokdas9626@gmail.com'
 application.config['MAIL_PASSWORD'] = 'Arushi1307'
-application.config['MAIL_USE_TLS'] = True
-application.config['MAIL_USE_SSL'] = False
+application.config['MAIL_USE_TLS'] = False
+application.config['MAIL_USE_SSL'] = True
 
 mail = Mail(application)
 
