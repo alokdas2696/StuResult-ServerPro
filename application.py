@@ -21,9 +21,9 @@ application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(application)
 
 application.config['MAIL_SERVER'] = 'smtp.gmail.com'
-application.config['MAIL_PORT'] = 465
-application.config['MAIL_USERNAME'] = params['gmail-user']
-application.config['MAIL_PASSWORD'] = params['gmail-password']
+application.config['MAIL_PORT'] = 587
+application.config['MAIL_USERNAME'] = 'alokdas2696@gmail.com'
+application.config['MAIL_PASSWORD'] = 'Arushi1307'
 application.config['MAIL_USE_TLS'] = False
 application.config['MAIL_USE_SSL'] = True
 
@@ -49,9 +49,11 @@ def home():
 def verify():
     if request.method == 'POST':
         # email = request.form.get('email')
+
         d = request.form.get('rollno')
         stuid = Student.query.get(d)
         email = stuid.email
+        # if email.strip() == email:
         if email.strip() == email:
             msg = Message('OTP',sender='alokdas9626@gmail.com', recipients=[email])
             msg.body = str(otp)
