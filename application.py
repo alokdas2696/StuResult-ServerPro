@@ -1,4 +1,5 @@
-# import os
+
+import os
 
 from flask import Flask, render_template, session,redirect
 from flask_sqlalchemy import SQLAlchemy, request
@@ -15,7 +16,7 @@ with open('config.json', 'r') as k:
 otp = randint(1111, 9999)
 
 
-application.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/studb'
+application.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('JAWSDB_URL')
 application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(application)
 
