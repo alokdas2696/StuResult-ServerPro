@@ -52,6 +52,8 @@ def verify():
 
         d = request.form.get('rollno')
         stuid = Student.query.get(d)
+        if stuid == None:
+            return "Invalid Roll number ... go back"
         email = stuid.email
         # if email.strip() == email:
         if email.strip() == email:
